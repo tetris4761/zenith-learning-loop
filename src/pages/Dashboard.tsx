@@ -92,7 +92,10 @@ export default function Dashboard() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg mb-xl">
-          <Card className="cursor-pointer hover:shadow-md transition-shadow duration-smooth">
+          <Card 
+            className="cursor-pointer hover:shadow-md transition-shadow duration-smooth"
+            onClick={() => navigate('/documents')}
+          >
             <CardHeader className="pb-md">
               <div className="flex items-center space-x-md">
                 <div className="bg-primary/10 p-sm rounded-lg">
