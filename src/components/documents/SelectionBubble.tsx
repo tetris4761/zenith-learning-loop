@@ -6,13 +6,15 @@ import { Card } from '@/components/ui/card';
 import { useHighlights } from '@/hooks/useHighlights';
 import { useAICompletion } from '@/hooks/useAICompletion';
 import { useBoards } from '@/hooks/useBoards';
-import { AIResponseDialog } from './AIResponseDialog';
-import { CreateTaskDialog } from '../tasks/CreateTaskDialog';
+import { AIResponseSheet } from './AIResponseSheet';
+import { CreateTaskSheet } from '../tasks/CreateTaskSheet';
 import { cn } from '@/lib/utils';
 
 interface SelectionBubbleProps {
   editor: Editor;
   documentId?: string;
+  onAISheetOpen?: (open: boolean) => void;
+  onTaskSheetOpen?: (open: boolean) => void;
 }
 
 interface SelectionState {
@@ -22,7 +24,7 @@ interface SelectionState {
   isEmpty: boolean;
 }
 
-export function SelectionBubble({ editor, documentId }: SelectionBubbleProps) {
+export function SelectionBubble({ editor, documentId, onAISheetOpen, onTaskSheetOpen }: SelectionBubbleProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [selection, setSelection] = useState<SelectionState | null>(null);
@@ -123,6 +125,7 @@ export function SelectionBubble({ editor, documentId }: SelectionBubbleProps) {
       onSuccess: (highlight) => {
         setIsVisible(false);
         setTaskDialogOpen(true);
+        onTaskSheetOpen?.(true);
       }
     });
   };
@@ -132,6 +135,7 @@ export function SelectionBubble({ editor, documentId }: SelectionBubbleProps) {
     
     setIsVisible(false);
     setAiDialogOpen(true);
+    onAISheetOpen?.(true);
     
     try {
       await complete(
@@ -142,8 +146,6 @@ export function SelectionBubble({ editor, documentId }: SelectionBubbleProps) {
     } catch (error) {
       // Error handling is done in the hook
     }
-    
-    editor.chain().focus().run();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -212,22 +214,29 @@ export function SelectionBubble({ editor, documentId }: SelectionBubbleProps) {
         </div>
       </Card>
 
-      <AIResponseDialog
+      <AIResponseSheet
         open={aiDialogOpen}
-        onOpenChange={setAiDialogOpen}
+        onOpenChange={(open) => {
+          setAiDialogOpen(open);
+          onAISheetOpen?.(open);
+        }}
         title="AI Explanation"
         result={result}
         isLoading={isLoading}
         selectedText={selection?.text}
       />
 
-      <CreateTaskDialog
+      <CreateTaskSheet
         open={taskDialogOpen}
-        onOpenChange={setTaskDialogOpen}
+        onOpenChange={(open) => {
+          setTaskDialogOpen(open);
+          onTaskSheetOpen?.(open);
+        }}
         boardId={defaultBoardId}
         selectedText={selection?.text}
         onTaskCreated={() => {
           setTaskDialogOpen(false);
+          onTaskSheetOpen?.(false);
           editor.chain().focus().run();
         }}
       />

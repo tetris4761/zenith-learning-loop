@@ -13,9 +13,11 @@ interface TiptapEditorProps {
   onChange: (content: any, wordCount: number) => void;
   placeholder?: string;
   documentId?: string;
+  onAISheetOpen?: (open: boolean) => void;
+  onTaskSheetOpen?: (open: boolean) => void;
 }
 
-export function TiptapEditor({ content, onChange, placeholder = "Start typing...", documentId }: TiptapEditorProps) {
+export function TiptapEditor({ content, onChange, placeholder = "Start typing...", documentId, onAISheetOpen, onTaskSheetOpen }: TiptapEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -99,7 +101,12 @@ export function TiptapEditor({ content, onChange, placeholder = "Start typing...
         </div>
       </div>
 
-      <SelectionBubble editor={editor} documentId={documentId} />
+      <SelectionBubble 
+        editor={editor} 
+        documentId={documentId} 
+        onAISheetOpen={onAISheetOpen}
+        onTaskSheetOpen={onTaskSheetOpen}
+      />
     </div>
   );
 }
