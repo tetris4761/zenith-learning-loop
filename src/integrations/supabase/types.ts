@@ -14,7 +14,485 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      boards: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      cards: {
+        Row: {
+          back: string
+          created_at: string | null
+          deck_id: string
+          front: string
+          id: string
+          tags: string[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          back: string
+          created_at?: string | null
+          deck_id: string
+          front: string
+          id?: string
+          tags?: string[] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          back?: string
+          created_at?: string | null
+          deck_id?: string
+          front?: string
+          id?: string
+          tags?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cards_deck_id_fkey"
+            columns: ["deck_id"]
+            isOneToOne: false
+            referencedRelation: "decks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      columns: {
+        Row: {
+          board_id: string
+          created_at: string | null
+          id: string
+          name: string
+          position: number
+        }
+        Insert: {
+          board_id: string
+          created_at?: string | null
+          id?: string
+          name: string
+          position: number
+        }
+        Update: {
+          board_id?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          position?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "columns_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      decks: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      documents: {
+        Row: {
+          content: Json | null
+          created_at: string | null
+          folder_id: string | null
+          id: string
+          title: string
+          updated_at: string | null
+          user_id: string
+          word_count: number | null
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string | null
+          folder_id?: string | null
+          id?: string
+          title: string
+          updated_at?: string | null
+          user_id: string
+          word_count?: number | null
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string | null
+          folder_id?: string | null
+          id?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+          word_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      external_events: {
+        Row: {
+          calendar_id: string | null
+          created_at: string | null
+          ends_at: string
+          external_id: string
+          id: string
+          source: string | null
+          starts_at: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          calendar_id?: string | null
+          created_at?: string | null
+          ends_at: string
+          external_id: string
+          id?: string
+          source?: string | null
+          starts_at: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          calendar_id?: string | null
+          created_at?: string | null
+          ends_at?: string
+          external_id?: string
+          id?: string
+          source?: string | null
+          starts_at?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      folders: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          parent_id: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          parent_id?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          parent_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "folders_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      highlights: {
+        Row: {
+          anchor_data: Json
+          created_at: string | null
+          document_id: string
+          id: string
+          text_content: string
+          user_id: string
+        }
+        Insert: {
+          anchor_data: Json
+          created_at?: string | null
+          document_id: string
+          id?: string
+          text_content: string
+          user_id: string
+        }
+        Update: {
+          anchor_data?: Json
+          created_at?: string | null
+          document_id?: string
+          id?: string
+          text_content?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "highlights_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      links: {
+        Row: {
+          created_at: string | null
+          id: string
+          linked_id: string | null
+          linked_type: Database["public"]["Enums"]["link_type"]
+          task_id: string
+          url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          linked_id?: string | null
+          linked_type: Database["public"]["Enums"]["link_type"]
+          task_id: string
+          url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          linked_id?: string | null
+          linked_type?: Database["public"]["Enums"]["link_type"]
+          task_id?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "links_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pomodoro_sessions: {
+        Row: {
+          break_minutes: number
+          completed_at: string | null
+          created_at: string | null
+          focus_minutes: number
+          id: string
+          started_at: string | null
+          user_id: string
+        }
+        Insert: {
+          break_minutes?: number
+          completed_at?: string | null
+          created_at?: string | null
+          focus_minutes?: number
+          id?: string
+          started_at?: string | null
+          user_id: string
+        }
+        Update: {
+          break_minutes?: number
+          completed_at?: string | null
+          created_at?: string | null
+          focus_minutes?: number
+          id?: string
+          started_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          card_id: string
+          created_at: string | null
+          due_date: string | null
+          ease_factor: number | null
+          id: string
+          interval_days: number | null
+          last_quality: number | null
+          last_reviewed_at: string | null
+          repetitions: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          card_id: string
+          created_at?: string | null
+          due_date?: string | null
+          ease_factor?: number | null
+          id?: string
+          interval_days?: number | null
+          last_quality?: number | null
+          last_reviewed_at?: string | null
+          repetitions?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          card_id?: string
+          created_at?: string | null
+          due_date?: string | null
+          ease_factor?: number | null
+          id?: string
+          interval_days?: number | null
+          last_quality?: number | null
+          last_reviewed_at?: string | null
+          repetitions?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: true
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          board_id: string
+          column_id: string
+          created_at: string | null
+          description: string | null
+          due_at: string | null
+          id: string
+          position: number
+          priority: Database["public"]["Enums"]["priority_level"] | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          board_id: string
+          column_id: string
+          created_at?: string | null
+          description?: string | null
+          due_at?: string | null
+          id?: string
+          position: number
+          priority?: Database["public"]["Enums"]["priority_level"] | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          board_id?: string
+          column_id?: string
+          created_at?: string | null
+          description?: string | null
+          due_at?: string | null
+          id?: string
+          position?: number
+          priority?: Database["public"]["Enums"]["priority_level"] | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_column_id_fkey"
+            columns: ["column_id"]
+            isOneToOne: false
+            referencedRelation: "columns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_activity_date: string | null
+          layout_preset: string | null
+          panel_sizes: Json | null
+          streak_count: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_activity_date?: string | null
+          layout_preset?: string | null
+          panel_sizes?: Json | null
+          streak_count?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_activity_date?: string | null
+          layout_preset?: string | null
+          panel_sizes?: Json | null
+          streak_count?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +501,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      link_type: "document" | "highlight" | "deck" | "card" | "url"
+      priority_level: "low" | "medium" | "high"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +629,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      link_type: ["document", "highlight", "deck", "card", "url"],
+      priority_level: ["low", "medium", "high"],
+    },
   },
 } as const
