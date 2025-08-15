@@ -4,6 +4,8 @@ import { CreditCard, Plus, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useHighlights } from '@/hooks/useHighlights';
+import { useAICompletion } from '@/hooks/useAICompletion';
+import { AIResponseDialog } from './AIResponseDialog';
 import { cn } from '@/lib/utils';
 
 interface SelectionBubbleProps {
@@ -21,8 +23,10 @@ export function SelectionBubble({ editor }: SelectionBubbleProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [selection, setSelection] = useState<SelectionState | null>(null);
+  const [aiDialogOpen, setAiDialogOpen] = useState(false);
   const bubbleRef = useRef<HTMLDivElement>(null);
   const { createHighlight } = useHighlights();
+  const { complete, isLoading, result } = useAICompletion();
 
   useEffect(() => {
     const updateBubble = () => {
@@ -111,12 +115,22 @@ export function SelectionBubble({ editor }: SelectionBubbleProps) {
     editor.chain().focus().run();
   };
 
-  const handleAIExplain = () => {
+  const handleAIExplain = async () => {
     if (!selection) return;
     
-    // TODO: Implement AI explanation
-    console.log('AI explain:', selection.text);
     setIsVisible(false);
+    setAiDialogOpen(true);
+    
+    try {
+      await complete(
+        'Please explain this text clearly and provide helpful context.',
+        'explain',
+        selection.text
+      );
+    } catch (error) {
+      // Error handling is done in the hook
+    }
+    
     editor.chain().focus().run();
   };
 
@@ -130,52 +144,64 @@ export function SelectionBubble({ editor }: SelectionBubbleProps) {
   if (!isVisible || !selection) return null;
 
   return (
-    <Card
-      ref={bubbleRef}
-      className={cn(
-        "fixed z-50 p-2 shadow-lg border bg-card",
-        "animate-in fade-in-0 zoom-in-95 duration-150"
-      )}
-      style={{
-        top: position.top,
-        left: position.left,
-      }}
-      onKeyDown={handleKeyDown}
-    >
-      <div className="flex items-center gap-1">
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={handleCreateFlashcard}
-          className="h-8 px-2 text-xs gap-1"
-          title="Create Flashcard"
-        >
-          <CreditCard className="h-3 w-3" />
-          <span className="hidden sm:inline">Flashcard</span>
-        </Button>
+    <>
+      <Card
+        ref={bubbleRef}
+        className={cn(
+          "fixed z-50 p-2 shadow-lg border bg-card",
+          "animate-in fade-in-0 zoom-in-95 duration-150"
+        )}
+        style={{
+          top: position.top,
+          left: position.left,
+        }}
+        onKeyDown={handleKeyDown}
+      >
+        <div className="flex items-center gap-1">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={handleCreateFlashcard}
+            className="h-8 px-2 text-xs gap-1"
+            title="Create Flashcard"
+          >
+            <CreditCard className="h-3 w-3" />
+            <span className="hidden sm:inline">Flashcard</span>
+          </Button>
 
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={handleAddToTask}
-          className="h-8 px-2 text-xs gap-1"
-          title="Add to Task"
-        >
-          <Plus className="h-3 w-3" />
-          <span className="hidden sm:inline">Task</span>
-        </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={handleAddToTask}
+            className="h-8 px-2 text-xs gap-1"
+            title="Add to Task"
+          >
+            <Plus className="h-3 w-3" />
+            <span className="hidden sm:inline">Task</span>
+          </Button>
 
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={handleAIExplain}
-          className="h-8 px-2 text-xs gap-1"
-          title="AI Explain"
-        >
-          <Sparkles className="h-3 w-3" />
-          <span className="hidden sm:inline">Explain</span>
-        </Button>
-      </div>
-    </Card>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={handleAIExplain}
+            className="h-8 px-2 text-xs gap-1"
+            title="AI Explain"
+            disabled={isLoading}
+          >
+            <Sparkles className="h-3 w-3" />
+            <span className="hidden sm:inline">Explain</span>
+          </Button>
+        </div>
+      </Card>
+
+      <AIResponseDialog
+        open={aiDialogOpen}
+        onOpenChange={setAiDialogOpen}
+        title="AI Explanation"
+        result={result}
+        isLoading={isLoading}
+        selectedText={selection?.text}
+      />
+    </>
   );
 }
