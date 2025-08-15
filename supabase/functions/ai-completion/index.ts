@@ -14,7 +14,14 @@ serve(async (req) => {
 
   try {
     const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
+    
+    console.log('Environment check:', {
+      hasApiKey: !!OPENROUTER_API_KEY,
+      keyLength: OPENROUTER_API_KEY ? OPENROUTER_API_KEY.length : 0
+    });
+    
     if (!OPENROUTER_API_KEY) {
+      console.error('OPENROUTER_API_KEY is not set in environment variables');
       throw new Error('OPENROUTER_API_KEY is not set');
     }
 
