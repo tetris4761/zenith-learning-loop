@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { DocumentsSidebar } from '@/components/documents/DocumentsSidebar';
 import { DocumentList } from '@/components/documents/DocumentList';
 import { EditorView } from '@/components/documents/EditorView';
+import { TaskSidebar } from '@/components/tasks/TaskSidebar';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import { useDocuments } from '@/hooks/useDocuments';
 import { useFolders } from '@/hooks/useFolders';
@@ -22,6 +23,7 @@ export default function Documents() {
   const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showTaskSidebar, setShowTaskSidebar] = useState(true);
   
   const { documents, isLoading: documentsLoading } = useDocuments({
     folderId: selectedFolderId,
@@ -63,7 +65,7 @@ export default function Documents() {
         
         <ResizableHandle withHandle />
         
-        <ResizablePanel defaultSize={75}>
+        <ResizablePanel defaultSize={showTaskSidebar ? 50 : 75}>
           {selectedDocument ? (
             <EditorView
               document={selectedDocument}
@@ -79,6 +81,15 @@ export default function Documents() {
             />
           )}
         </ResizablePanel>
+
+        {showTaskSidebar && (
+          <>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={25} minSize={20} maxSize={40}>
+              <TaskSidebar />
+            </ResizablePanel>
+          </>
+        )}
       </ResizablePanelGroup>
     </div>
   );

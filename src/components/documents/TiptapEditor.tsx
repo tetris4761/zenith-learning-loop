@@ -12,9 +12,10 @@ interface TiptapEditorProps {
   content: any;
   onChange: (content: any, wordCount: number) => void;
   placeholder?: string;
+  documentId?: string;
 }
 
-export function TiptapEditor({ content, onChange, placeholder = "Start typing..." }: TiptapEditorProps) {
+export function TiptapEditor({ content, onChange, placeholder = "Start typing...", documentId }: TiptapEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -98,7 +99,7 @@ export function TiptapEditor({ content, onChange, placeholder = "Start typing...
         </div>
       </div>
 
-      <SelectionBubble editor={editor} />
+      <SelectionBubble editor={editor} documentId={documentId} />
     </div>
   );
 }

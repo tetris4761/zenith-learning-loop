@@ -131,6 +131,7 @@ export function EditorView({ document, onClose }: EditorViewProps) {
             content={content}
             onChange={handleContentChange}
             placeholder="Start typing..."
+            documentId={document.id}
           />
         </div>
 

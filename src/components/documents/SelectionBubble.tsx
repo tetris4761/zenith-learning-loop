@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { type Editor } from '@tiptap/react';
-import { CreditCard, Plus, Sparkles } from 'lucide-react';
+import { CreditCard, Plus, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useHighlights } from '@/hooks/useHighlights';
 import { useAICompletion } from '@/hooks/useAICompletion';
+import { useBoards } from '@/hooks/useBoards';
 import { AIResponseDialog } from './AIResponseDialog';
+import { CreateTaskDialog } from '../tasks/CreateTaskDialog';
 import { cn } from '@/lib/utils';
 
 interface SelectionBubbleProps {
   editor: Editor;
+  documentId?: string;
 }
 
 interface SelectionState {
@@ -19,14 +22,24 @@ interface SelectionState {
   isEmpty: boolean;
 }
 
-export function SelectionBubble({ editor }: SelectionBubbleProps) {
+export function SelectionBubble({ editor, documentId }: SelectionBubbleProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [selection, setSelection] = useState<SelectionState | null>(null);
   const [aiDialogOpen, setAiDialogOpen] = useState(false);
+  const [taskDialogOpen, setTaskDialogOpen] = useState(false);
+  const [defaultBoardId, setDefaultBoardId] = useState<string>('');
   const bubbleRef = useRef<HTMLDivElement>(null);
   const { createHighlight } = useHighlights();
   const { complete, isLoading, result } = useAICompletion();
+  const { boards } = useBoards();
+
+  // Auto-select first board when available
+  useEffect(() => {
+    if (boards && boards.length > 0 && !defaultBoardId) {
+      setDefaultBoardId(boards[0].id);
+    }
+  }, [boards, defaultBoardId]);
 
   useEffect(() => {
     const updateBubble = () => {
@@ -98,21 +111,20 @@ export function SelectionBubble({ editor }: SelectionBubbleProps) {
   };
 
   const handleAddToTask = () => {
-    if (!selection) return;
+    if (!selection || !documentId) return;
     
-    // TODO: Implement task creation with highlight
-    console.log('Add to task:', selection.text);
-    
-    // Create highlight first
-    // createHighlight({
-    //   documentId: document.id, // Need to pass document ID
-    //   anchorStart: selection.from,
-    //   anchorEnd: selection.to,
-    //   textContent: selection.text,
-    // });
-    
-    setIsVisible(false);
-    editor.chain().focus().run();
+    // Create highlight first, then open task dialog
+    createHighlight({
+      documentId,
+      anchorStart: selection.from,
+      anchorEnd: selection.to,
+      textContent: selection.text,
+    }, {
+      onSuccess: (highlight) => {
+        setIsVisible(false);
+        setTaskDialogOpen(true);
+      }
+    });
   };
 
   const handleAIExplain = async () => {
@@ -188,8 +200,14 @@ export function SelectionBubble({ editor }: SelectionBubbleProps) {
             title="AI Explain"
             disabled={isLoading}
           >
-            <Sparkles className="h-3 w-3" />
-            <span className="hidden sm:inline">Explain</span>
+            {isLoading ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : (
+              <Sparkles className="h-3 w-3" />
+            )}
+            <span className="hidden sm:inline">
+              {isLoading ? 'Thinking...' : 'Explain'}
+            </span>
           </Button>
         </div>
       </Card>
@@ -201,6 +219,17 @@ export function SelectionBubble({ editor }: SelectionBubbleProps) {
         result={result}
         isLoading={isLoading}
         selectedText={selection?.text}
+      />
+
+      <CreateTaskDialog
+        open={taskDialogOpen}
+        onOpenChange={setTaskDialogOpen}
+        boardId={defaultBoardId}
+        selectedText={selection?.text}
+        onTaskCreated={() => {
+          setTaskDialogOpen(false);
+          editor.chain().focus().run();
+        }}
       />
     </>
   );
