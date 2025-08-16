@@ -88,12 +88,13 @@ export function SelectionBubble({ editor, documentId, onAISheetOpen, onTaskSheet
     editor.on('selectionUpdate', handleSelectionUpdate);
     editor.on('focus', handleSelectionUpdate);
     editor.on('blur', () => {
-      // Keep visible briefly to allow clicking bubble
+      // Keep visible longer to allow clicking bubble and prevent disappearing
       setTimeout(() => {
-        if (!bubbleRef.current?.contains(document.activeElement)) {
+        if (!bubbleRef.current?.contains(document.activeElement) && 
+            !aiDialogOpen && !taskDialogOpen) {
           setIsVisible(false);
         }
-      }, 150);
+      }, 300);
     });
 
     return () => {
@@ -121,13 +122,11 @@ export function SelectionBubble({ editor, documentId, onAISheetOpen, onTaskSheet
       anchorStart: selection.from,
       anchorEnd: selection.to,
       textContent: selection.text,
-    }, {
-      onSuccess: (highlight) => {
-        setIsVisible(false);
-        setTaskDialogOpen(true);
-        onTaskSheetOpen?.(true);
-      }
     });
+    
+    setIsVisible(false);
+    setTaskDialogOpen(true);
+    onTaskSheetOpen?.(true);
   };
 
   const handleAIExplain = async () => {

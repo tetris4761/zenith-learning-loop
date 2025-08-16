@@ -6,9 +6,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
-import Dashboard from "./pages/Dashboard";
-import ReviewPage from "./pages/ReviewPage";
-import Documents from "./pages/Documents";
+import { DashboardLayout } from "./components/DashboardLayout";
+import { DashboardHome } from "./components/dashboard/DashboardHome";
+import { DocumentsModule } from "./components/dashboard/DocumentsModule";
+import { TasksModule } from "./components/dashboard/TasksModule";
+import { ReviewModule } from "./components/dashboard/ReviewModule";
+import { CalendarModule } from "./components/dashboard/CalendarModule";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,9 +26,13 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<AuthPage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/review" element={<ReviewPage />} />
-            <Route path="/documents" element={<Documents />} />
+            <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route index element={<DashboardHome />} />
+              <Route path="documents" element={<DocumentsModule />} />
+              <Route path="tasks" element={<TasksModule />} />
+              <Route path="review" element={<ReviewModule />} />
+              <Route path="calendar" element={<CalendarModule />} />
+            </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
