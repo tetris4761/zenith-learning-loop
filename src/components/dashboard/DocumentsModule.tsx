@@ -43,7 +43,7 @@ export function DocumentsModule() {
         
         <ResizableHandle withHandle />
         
-        <ResizablePanel defaultSize={showTaskSidebar && !aiSheetOpen && !taskSheetOpen ? 50 : 75}>
+        <ResizablePanel defaultSize={showTaskSidebar && !aiSheetOpen && !taskSheetOpen ? 60 : 75}>
           {selectedDocument ? (
             <EditorView
               document={selectedDocument}

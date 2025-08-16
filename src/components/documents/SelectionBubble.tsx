@@ -113,20 +113,28 @@ export function SelectionBubble({ editor, documentId, onAISheetOpen, onTaskSheet
     editor.chain().focus().run();
   };
 
-  const handleAddToTask = () => {
+  const handleAddToTask = async () => {
     if (!selection || !documentId) return;
     
-    // Create highlight first, then open task dialog
-    createHighlight({
-      documentId,
-      anchorStart: selection.from,
-      anchorEnd: selection.to,
-      textContent: selection.text,
-    });
-    
-    setIsVisible(false);
-    setTaskDialogOpen(true);
-    onTaskSheetOpen?.(true);
+    try {
+      // Create highlight first, wait for completion, then open task dialog
+      await createHighlight({
+        documentId,
+        anchorStart: selection.from,
+        anchorEnd: selection.to,
+        textContent: selection.text,
+      });
+      
+      setIsVisible(false);
+      setTaskDialogOpen(true);
+      onTaskSheetOpen?.(true);
+    } catch (error) {
+      console.error('Failed to create highlight:', error);
+      // Still allow task creation even if highlight fails
+      setIsVisible(false);
+      setTaskDialogOpen(true);
+      onTaskSheetOpen?.(true);
+    }
   };
 
   const handleAIExplain = async () => {

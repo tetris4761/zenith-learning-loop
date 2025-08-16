@@ -12,6 +12,9 @@ import { DocumentsModule } from "./components/dashboard/DocumentsModule";
 import { TasksModule } from "./components/dashboard/TasksModule";
 import { ReviewModule } from "./components/dashboard/ReviewModule";
 import { CalendarModule } from "./components/dashboard/CalendarModule";
+import { FlashcardsModule } from "./components/dashboard/FlashcardsModule";
+import { AnalyticsModule } from "./components/dashboard/AnalyticsModule";
+import { PomodoroModule } from "./components/dashboard/PomodoroModule";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +33,9 @@ const App = () => (
               <Route index element={<DashboardHome />} />
               <Route path="documents" element={<DocumentsModule />} />
               <Route path="tasks" element={<TasksModule />} />
+              <Route path="flashcards" element={<FlashcardsModule />} />
+              <Route path="focus" element={<PomodoroModule />} />
+              <Route path="analytics" element={<AnalyticsModule />} />
               <Route path="review" element={<ReviewModule />} />
               <Route path="calendar" element={<CalendarModule />} />
             </Route>

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { BookOpen, Brain, Calendar, LayoutDashboard, Settings, LogOut, CheckSquare } from "lucide-react"
+import { BookOpen, Brain, Calendar, LayoutDashboard, Settings, LogOut, CheckSquare, CreditCard, BarChart3, Timer } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
 
@@ -22,6 +22,9 @@ const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Documents", url: "/dashboard/documents", icon: BookOpen },
   { title: "Tasks", url: "/dashboard/tasks", icon: CheckSquare },
+  { title: "Flashcards", url: "/dashboard/flashcards", icon: CreditCard },
+  { title: "Focus Timer", url: "/dashboard/focus", icon: Timer },
+  { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 },
   { title: "Review", url: "/dashboard/review", icon: Brain },
   { title: "Calendar", url: "/dashboard/calendar", icon: Calendar },
 ]
