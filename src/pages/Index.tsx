@@ -41,7 +41,15 @@ const Index = () => {
     );
   }
 
-  return null;
+  // Show loading state while redirecting authenticated users
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-subtle">
+      <div className="text-center space-y-md">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+        <p className="text-muted-foreground">Redirecting to dashboard...</p>
+      </div>
+    </div>
+  );
 };
 
 export default Index;
