@@ -22,11 +22,9 @@ interface Document {
 interface EditorViewProps {
   document: Document;
   onClose: () => void;
-  onAISheetOpen?: (open: boolean) => void;
-  onTaskSheetOpen?: (open: boolean) => void;
 }
 
-export function EditorView({ document, onClose, onAISheetOpen, onTaskSheetOpen }: EditorViewProps) {
+export function EditorView({ document, onClose }: EditorViewProps) {
   const { updateDocument, isUpdating } = useDocuments();
   const [title, setTitle] = useState(document.title);
   const [content, setContent] = useState(document.content);
@@ -132,10 +130,8 @@ export function EditorView({ document, onClose, onAISheetOpen, onTaskSheetOpen }
           <TiptapEditor
             content={content}
             onChange={handleContentChange}
-            placeholder="Start typing..."
+            placeholder="Start writing your document..."
             documentId={document.id}
-            onAISheetOpen={onAISheetOpen}
-            onTaskSheetOpen={onTaskSheetOpen}
           />
         </div>
 

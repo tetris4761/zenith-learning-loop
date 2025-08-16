@@ -13,8 +13,6 @@ import { cn } from '@/lib/utils';
 interface SelectionBubbleProps {
   editor: Editor;
   documentId?: string;
-  onAISheetOpen?: (open: boolean) => void;
-  onTaskSheetOpen?: (open: boolean) => void;
 }
 
 interface SelectionState {
@@ -24,7 +22,7 @@ interface SelectionState {
   isEmpty: boolean;
 }
 
-export function SelectionBubble({ editor, documentId, onAISheetOpen, onTaskSheetOpen }: SelectionBubbleProps) {
+export function SelectionBubble({ editor, documentId }: SelectionBubbleProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [selection, setSelection] = useState<SelectionState | null>(null);
@@ -32,7 +30,7 @@ export function SelectionBubble({ editor, documentId, onAISheetOpen, onTaskSheet
   const [taskDialogOpen, setTaskDialogOpen] = useState(false);
   const [defaultBoardId, setDefaultBoardId] = useState<string>('');
   const bubbleRef = useRef<HTMLDivElement>(null);
-  const { createHighlight } = useHighlights();
+  const { createHighlightAsync } = useHighlights();
   const { complete, isLoading, result } = useAICompletion();
   const { boards } = useBoards();
 
@@ -94,7 +92,7 @@ export function SelectionBubble({ editor, documentId, onAISheetOpen, onTaskSheet
             !aiDialogOpen && !taskDialogOpen) {
           setIsVisible(false);
         }
-      }, 300);
+      }, 500);
     });
 
     return () => {
@@ -118,7 +116,7 @@ export function SelectionBubble({ editor, documentId, onAISheetOpen, onTaskSheet
     
     try {
       // Create highlight first, wait for completion, then open task dialog
-      await createHighlight({
+      await createHighlightAsync({
         documentId,
         anchorStart: selection.from,
         anchorEnd: selection.to,
@@ -127,13 +125,11 @@ export function SelectionBubble({ editor, documentId, onAISheetOpen, onTaskSheet
       
       setIsVisible(false);
       setTaskDialogOpen(true);
-      onTaskSheetOpen?.(true);
     } catch (error) {
       console.error('Failed to create highlight:', error);
       // Still allow task creation even if highlight fails
       setIsVisible(false);
       setTaskDialogOpen(true);
-      onTaskSheetOpen?.(true);
     }
   };
 
@@ -142,7 +138,6 @@ export function SelectionBubble({ editor, documentId, onAISheetOpen, onTaskSheet
     
     setIsVisible(false);
     setAiDialogOpen(true);
-    onAISheetOpen?.(true);
     
     try {
       await complete(
@@ -223,10 +218,7 @@ export function SelectionBubble({ editor, documentId, onAISheetOpen, onTaskSheet
 
       <AIResponseSheet
         open={aiDialogOpen}
-        onOpenChange={(open) => {
-          setAiDialogOpen(open);
-          onAISheetOpen?.(open);
-        }}
+        onOpenChange={setAiDialogOpen}
         title="AI Explanation"
         result={result}
         isLoading={isLoading}
@@ -235,15 +227,11 @@ export function SelectionBubble({ editor, documentId, onAISheetOpen, onTaskSheet
 
       <CreateTaskSheet
         open={taskDialogOpen}
-        onOpenChange={(open) => {
-          setTaskDialogOpen(open);
-          onTaskSheetOpen?.(open);
-        }}
+        onOpenChange={setTaskDialogOpen}
         boardId={defaultBoardId}
         selectedText={selection?.text}
         onTaskCreated={() => {
           setTaskDialogOpen(false);
-          onTaskSheetOpen?.(false);
           editor.chain().focus().run();
         }}
       />

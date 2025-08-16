@@ -122,6 +122,7 @@ export function useHighlights(documentId?: string) {
     isLoading: query.isLoading,
     error: query.error,
     createHighlight: createHighlight.mutate,
+    createHighlightAsync: createHighlight.mutateAsync,
     deleteHighlight: deleteHighlight.mutate,
     isCreating: createHighlight.isPending,
     isDeleting: deleteHighlight.isPending,

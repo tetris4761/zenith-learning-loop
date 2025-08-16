@@ -12,8 +12,6 @@ export function DocumentsModule() {
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [showTaskSidebar, setShowTaskSidebar] = useState(true)
-  const [aiSheetOpen, setAiSheetOpen] = useState(false)
-  const [taskSheetOpen, setTaskSheetOpen] = useState(false)
   
   const { documents, isLoading: documentsLoading } = useDocuments({
     folderId: selectedFolderId,
@@ -43,13 +41,11 @@ export function DocumentsModule() {
         
         <ResizableHandle withHandle />
         
-        <ResizablePanel defaultSize={showTaskSidebar && !aiSheetOpen && !taskSheetOpen ? 60 : 75}>
+        <ResizablePanel defaultSize={showTaskSidebar ? 60 : 75}>
           {selectedDocument ? (
             <EditorView
               document={selectedDocument}
               onClose={() => setSelectedDocumentId(null)}
-              onAISheetOpen={setAiSheetOpen}
-              onTaskSheetOpen={setTaskSheetOpen}
             />
           ) : (
             <DocumentList
@@ -62,7 +58,7 @@ export function DocumentsModule() {
           )}
         </ResizablePanel>
 
-        {showTaskSidebar && !aiSheetOpen && !taskSheetOpen && (
+        {showTaskSidebar && (
           <>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={25} minSize={20} maxSize={40}>
